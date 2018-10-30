@@ -8,6 +8,8 @@ TagManager:
   - Wall
   - Portal
   - BulletBorder
+  - Star
+  - SavePoint
   layers:
   - Default
   - TransparentFX

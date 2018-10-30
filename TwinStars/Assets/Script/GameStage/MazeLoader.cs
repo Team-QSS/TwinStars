@@ -18,7 +18,10 @@ public class MazeLoader : MonoBehaviour {
     void Start () {
         if (!GameState.saveData.tutorialShowing[GameState.StageLevel - 1]) {
             LoadMaze();
-            isInitialized = true;
+			Star b = GameObject.Find("BlueStar").GetComponent<Star>();
+			Star r = GameObject.Find("RedStar").GetComponent<Star>();
+			
+			isInitialized = true;
         }
     }
 
@@ -58,7 +61,8 @@ public class MazeLoader : MonoBehaviour {
                 spr.sortingOrder = -1;
             }
         }
-        for (int x = 0; x < width; x++) {
+
+		for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 switch (lines[(height - (y + 1)) + 6].ToCharArray()[x]) {
                     case '.':
@@ -186,6 +190,17 @@ public class MazeLoader : MonoBehaviour {
                         BoxCollider2D col = maze[x, y].AddComponent<BoxCollider2D>();
                         col.size = new Vector2(1, 1);
                         break;
+					case 'S':
+						maze[x, y] = new GameObject("SavePoint");
+						maze[x, y].tag = "SavePoint";
+
+						maze[x, y].transform.SetParent(transform);
+						maze[x, y].transform.localPosition = new Vector3(x, y);
+						maze[x, y].transform.Translate(new Vector3(-mazeView.x, -mazeView.y, 0));
+
+						BoxCollider2D collider = maze[x, y].AddComponent<BoxCollider2D>();
+						collider.isTrigger = true;
+						break;
                 }
 
                 if(maze[x,y] != null) {
@@ -193,7 +208,14 @@ public class MazeLoader : MonoBehaviour {
                 }
             }
         }
-    }
+		GameObject blueObj = GameObject.Find("BlueStar");
+		GameObject redObj = GameObject.Find("RedStar");
+
+		blueObj.GetComponent<Star>().blue = blueObj.transform.position;
+		blueObj.GetComponent<Star>().red = redObj.transform.position;
+		redObj.GetComponent<Star>().blue = blueObj.transform.position;
+		redObj.GetComponent<Star>().red = redObj.transform.position;
+	}
 	
 	// Update is called once per frame
 	void Update () {

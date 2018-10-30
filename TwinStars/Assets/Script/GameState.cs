@@ -45,7 +45,7 @@ public class GameState : MonoBehaviour {
         bf.Serialize(file, saveData);
         file.Close();
     }
-
+	
     public static TSSave LoadData() {
         string path = Application.persistentDataPath + "/save.dat";
         FileStream file;

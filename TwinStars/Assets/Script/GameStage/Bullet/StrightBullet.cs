@@ -23,8 +23,8 @@ public class StrightBullet : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        Debug.Log(Speed);
-        Debug.Log(Acc);
+//        Debug.Log(Speed);
+//        Debug.Log(Acc);
     }
 	
 	// Update is called once per frame

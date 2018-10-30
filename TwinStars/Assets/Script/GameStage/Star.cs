@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Star : MonoBehaviour {
+
+	public Vector3 blue;
+	public Vector3 red;
+
+	int deathCount = 10;
     bool isInitialized = false;
 
     // Use this for initialization
     void Start () {
-        GameState.isGamePaused = false;
+		GameState.isGamePaused = false;
         GameState.isGameOver = false;
         GameState.isGameClear = false;
         GetComponent<SpriteRenderer>().enabled = false;
@@ -20,7 +25,13 @@ public class Star : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (!isInitialized && !GameState.saveData.tutorialShowing[GameState.StageLevel - 1]) {
+		Debug.Log("RedStar " + red);
+		Debug.Log("BlueStar " + blue);
+		if (GameState.isGamePaused && Input.anyKey && !GameState.isGameOver && !GameState.isGameClear) {
+			GameState.isGamePaused = false;
+		}
+
+		if (!isInitialized && !GameState.saveData.tutorialShowing[GameState.StageLevel - 1]) {
             GetComponent<SpriteRenderer>().enabled = true;
             isInitialized = true;
         }
@@ -46,12 +57,25 @@ public class Star : MonoBehaviour {
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        if (other.gameObject.tag == "Bullet" && gameObject.name == "RedStar") {
-            GetComponent<Animator>().SetBool("isShooted", true);
-            GameObject.Find("BlueStar").GetComponent<Animator>().SetBool("isBlueExplode", true);
-            GameState.isGameOver = true;
-            GameState.isGamePaused = true;
-        }
+		if (other.gameObject.tag == "Bullet" && gameObject.name == "RedStar") {
+			if (deathCount <= 0) {
+				GetComponent<Animator>().SetBool("isShooted", true);
+				GameObject.Find("BlueStar").GetComponent<Animator>().SetBool("isBlueExplode", true);
+				GameState.isGameOver = true;	
+			} else {
+				GameObject.Find("RedStar").transform.position = red;
+				GameObject.Find("BlueStar").transform.position = blue;
+				deathCount--;
+			}
+			GameState.isGamePaused = true;
+		}
+		else if (other.gameObject.tag == "SavePoint") {
+			red = GameObject.Find("RedStar").transform.position;
+			blue = transform.position;
+			Star s = GameObject.Find("RedStar").GetComponent<Star>();
+			s.red = GameObject.Find("RedStar").transform.position;
+			s.blue = transform.position;
+		}
     }
 
     private void OnCollisionEnter2D(Collision2D collision) {
