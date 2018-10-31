@@ -27,7 +27,7 @@ public class MazeLoader : MonoBehaviour {
 
     void LoadMaze() {
         TextAsset text = Resources.Load("Stage" + GameState.StageLevel) as TextAsset;
-
+		Debug.Log("Stage" + GameState.StageLevel);
         string str = text.text;
         string[] lines = str.Split('\n');
 
@@ -167,7 +167,22 @@ public class MazeLoader : MonoBehaviour {
                     case '@':
                         GameObject.Find("BlueStar").transform.position = new Vector3(x, y, -transform.position.z) + transform.position;
                         GameObject.Find("BlueStar").transform.Translate(new Vector3(-mazeView.x, -mazeView.y, 0));
-                        break;
+						maze[x, y] = new GameObject("SavePoint");
+						maze[x, y].tag = "SavePoint";
+
+						maze[x, y].transform.SetParent(transform);
+						maze[x, y].transform.localPosition = new Vector3(x, y);
+						maze[x, y].transform.Translate(new Vector3(-mazeView.x, -mazeView.y, 0));
+
+						BoxCollider2D collider = maze[x, y].AddComponent<BoxCollider2D>();
+						collider.isTrigger = true;
+
+						Rigidbody2D rigidbody = maze[x, y].AddComponent<Rigidbody2D>();
+						rigidbody.gravityScale = 0;
+
+						Save save = GetComponent<Save>();
+						save.objs.Add(maze[x, y]);
+						break;
                     case 'P':
                         maze[x, y] = new GameObject("Portal");
                         maze[x, y].tag = "Portal";
@@ -191,6 +206,7 @@ public class MazeLoader : MonoBehaviour {
                         col.size = new Vector2(1, 1);
                         break;
 					case 'S':
+
 						maze[x, y] = new GameObject("SavePoint");
 						maze[x, y].tag = "SavePoint";
 
@@ -198,8 +214,14 @@ public class MazeLoader : MonoBehaviour {
 						maze[x, y].transform.localPosition = new Vector3(x, y);
 						maze[x, y].transform.Translate(new Vector3(-mazeView.x, -mazeView.y, 0));
 
-						BoxCollider2D collider = maze[x, y].AddComponent<BoxCollider2D>();
-						collider.isTrigger = true;
+						BoxCollider2D boxCol = maze[x, y].AddComponent<BoxCollider2D>();
+						boxCol.isTrigger = true;
+
+						Rigidbody2D ri2D = maze[x, y].AddComponent<Rigidbody2D>();
+						ri2D.gravityScale = 0;
+
+						Save s = GetComponent<Save>();
+						s.objs.Add(maze[x, y]);
 						break;
                 }
 
@@ -210,11 +232,8 @@ public class MazeLoader : MonoBehaviour {
         }
 		GameObject blueObj = GameObject.Find("BlueStar");
 		GameObject redObj = GameObject.Find("RedStar");
-
-		blueObj.GetComponent<Star>().blue = blueObj.transform.position;
-		blueObj.GetComponent<Star>().red = redObj.transform.position;
-		redObj.GetComponent<Star>().blue = blueObj.transform.position;
-		redObj.GetComponent<Star>().red = redObj.transform.position;
+		GetComponent<Save>().blueStar = blueObj.transform.position;
+		GetComponent<Save>().redStar = redObj.transform.position;
 	}
 	
 	// Update is called once per frame
@@ -247,16 +266,20 @@ public class MazeLoader : MonoBehaviour {
         if (delta.sqrMagnitude != 0) {
             mazeView += delta;
             GameObject.Find("BlueStar").transform.Translate(-delta);
-            foreach (GameObject obj in maze) {
-                if (obj) {
-                    obj.GetComponent<Rigidbody2D>().MovePosition(
-                        obj.GetComponent<Rigidbody2D>().position - delta);
-                }
+
+			foreach (GameObject obj in GetComponent<Save>().objs)
+				obj.transform.Translate(-delta);
+
+			foreach (GameObject obj in maze) {
+				if (obj && obj.tag != "SavePoint") {
+					obj.GetComponent<Rigidbody2D>().MovePosition(
+						obj.GetComponent<Rigidbody2D>().position - delta);
+				}
             }
 
             foreach (GameObject obj in backgrounds) {
                 obj.transform.Translate(-delta);
             }
-        }
+		}
     }
 }

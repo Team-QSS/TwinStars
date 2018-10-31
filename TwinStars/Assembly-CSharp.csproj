@@ -108,6 +108,7 @@
     <Compile Include="Assets\Script\GameStage\MazeLoader.cs" />
     <Compile Include="Assets\Script\GameStage\Pause.cs" />
     <Compile Include="Assets\Script\GameStage\PauseButton.cs" />
+    <Compile Include="Assets\Script\GameStage\Save.cs" />
     <Compile Include="Assets\Script\GameStage\Star.cs" />
     <Compile Include="Assets\Script\GameStage\Tutorial.cs" />
     <Compile Include="Assets\Script\GameStage\Tutorial_Button.cs" />

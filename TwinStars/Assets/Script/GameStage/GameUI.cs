@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class GameUI : MonoBehaviour {
 
     public GameObject pause;
     public GameObject gameover;
     public GameObject gameclear;
+	public Text deathCount;
 
 	// Use this for initialization
 	void Start () {
@@ -43,6 +45,7 @@ public class GameUI : MonoBehaviour {
             pause.SetActive(false);
         }
 
-        
+		deathCount.text = "death count " + GameObject.Find("RedStar").GetComponent<Star>().getDeathCount();
+
 	}
 }

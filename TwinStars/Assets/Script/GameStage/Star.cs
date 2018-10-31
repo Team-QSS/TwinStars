@@ -4,9 +4,7 @@ using UnityEngine;
 
 public class Star : MonoBehaviour {
 
-	public Vector3 blue;
-	public Vector3 red;
-
+	int unsuitableTime = 0;
 	int deathCount = 10;
     bool isInitialized = false;
 
@@ -25,11 +23,6 @@ public class Star : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		Debug.Log("RedStar " + red);
-		Debug.Log("BlueStar " + blue);
-		if (GameState.isGamePaused && Input.anyKey && !GameState.isGameOver && !GameState.isGameClear) {
-			GameState.isGamePaused = false;
-		}
 
 		if (!isInitialized && !GameState.saveData.tutorialShowing[GameState.StageLevel - 1]) {
             GetComponent<SpriteRenderer>().enabled = true;
@@ -42,7 +35,7 @@ public class Star : MonoBehaviour {
         if (GameState.isGamePaused) return;
         float deltaTime = Time.deltaTime;
         const float speed = 5.0f;
-
+		
         Vector2 moveDir = new Vector2(0, 0);
         if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) moveDir.y += 1;
         if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)) moveDir.y -= 1;
@@ -54,27 +47,31 @@ public class Star : MonoBehaviour {
         moveDir = moveDir * speed * deltaTime;
 
         GetComponent<Rigidbody2D>().MovePosition(GetComponent<Rigidbody2D>().position + moveDir);
-    }
+
+		unsuitableTime--;
+	}
 
     private void OnTriggerEnter2D(Collider2D other) {
 		if (other.gameObject.tag == "Bullet" && gameObject.name == "RedStar") {
-			if (deathCount <= 0) {
+			if (deathCount <= 0 && unsuitableTime < 0) {
 				GetComponent<Animator>().SetBool("isShooted", true);
 				GameObject.Find("BlueStar").GetComponent<Animator>().SetBool("isBlueExplode", true);
-				GameState.isGameOver = true;	
-			} else {
-				GameObject.Find("RedStar").transform.position = red;
-				GameObject.Find("BlueStar").transform.position = blue;
+				GameState.isGameOver = true;
+				GameState.isGamePaused = true;
+			} else if (unsuitableTime < 0) {
+				Save s = GameObject.Find("MazeLoader").GetComponent<Save>();
+				GameObject.Find("RedStar").transform.position = s.redStar;
+				GameObject.Find("BlueStar").transform.position = s.blueStar;
 				deathCount--;
+				Debug.Log(deathCount);
+				unsuitableTime = 60;
 			}
-			GameState.isGamePaused = true;
+			
 		}
 		else if (other.gameObject.tag == "SavePoint") {
-			red = GameObject.Find("RedStar").transform.position;
-			blue = transform.position;
-			Star s = GameObject.Find("RedStar").GetComponent<Star>();
-			s.red = GameObject.Find("RedStar").transform.position;
-			s.blue = transform.position;
+			Save s = GameObject.Find("MazeLoader").GetComponent<Save>();
+			s.nowObj = other.gameObject;
+			s.redStar = GameObject.Find("RedStar").transform.position;
 		}
     }
 
@@ -96,4 +93,9 @@ public class Star : MonoBehaviour {
 
         }
     }
+
+	public int getDeathCount() {
+		return deathCount;
+	}
+
 }
