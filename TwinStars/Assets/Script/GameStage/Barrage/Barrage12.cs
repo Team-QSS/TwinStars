@@ -57,9 +57,10 @@ public class Barrage12 : Barrage {
             }
         }
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
         if (GameState.isGamePaused) return;
 
         Vector3 pos = center - GameObject.Find("BarrageLoader").transform.position;
@@ -68,11 +69,13 @@ public class Barrage12 : Barrage {
 
         center += direction * Time.deltaTime;
 
-        foreach(GameObject obj in bulletList) {
+        foreach (GameObject obj in bulletList)
+        {
             obj.GetComponent<CircularOrbitBullet>().SetCenter(center);
         }
 
-        for(int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++)
+        {
             Vector3 start = vertex[i];
             Vector3 mid = vertex[(i + 1) % 4];
             Vector3 end = vertex[(i + 2) % 4];
@@ -86,7 +89,8 @@ public class Barrage12 : Barrage {
 
             obj.GetComponent<StrightBullet>().setSpeed(3);
             float angle = Vector3.Angle(e - b, Vector3.right);
-            if ((e - b).y < 0) {
+            if ((e - b).y < 0)
+            {
                 angle = 360 - angle;
             }
             obj.GetComponent<StrightBullet>().setDirection(angle);

@@ -31,7 +31,7 @@ public class SelectStageScene : MonoBehaviour {
             {
                 if(!GameState.saveData.isPlayable[Page * 10 + i - 1])
                 {
-                    Buttons[i - 1].GetComponent<Button>().interactable = false;
+                    Buttons[i - 1].GetComponent<Button>().interactable = true;
                 }
                 else
                 {
