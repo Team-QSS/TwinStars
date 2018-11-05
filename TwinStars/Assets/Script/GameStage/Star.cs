@@ -63,7 +63,7 @@ public class Star : MonoBehaviour {
 
 	private void OnTriggerEnter2D(Collider2D other) {
 		if (other.gameObject.tag == "Bullet" && gameObject.name == "RedStar") {
-			if (deathCount <= 0 && unsuitableTime < 0) {
+			if (deathCount <= 1) {
 				GetComponent<Animator>().SetBool("isShooted", true);
 				GameObject.Find("BlueStar").GetComponent<Animator>().SetBool("isBlueExplode", true);
 				GameState.isGameOver = true;
