@@ -59,7 +59,7 @@ public class Barrage12 : Barrage {
     }
 
     // Update is called once per frame
-    void Update()
+    /*void Update()
     {
         if (GameState.isGamePaused) return;
 
@@ -98,5 +98,5 @@ public class Barrage12 : Barrage {
 
         p += Time.deltaTime / 3f;
         while (p > 1) p -= 1;
-    }
+    }*/
 }

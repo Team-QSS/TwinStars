@@ -25,7 +25,8 @@ public class BarrageLoader : MonoBehaviour {
         typeof(Barrage19),
         typeof(Barrage20),
         typeof(Barrage21),
-        typeof(Barrage22)
+        typeof(Barrage22),
+        typeof(Barrage51)
     };
     bool isInitialized;
 
@@ -35,11 +36,21 @@ public class BarrageLoader : MonoBehaviour {
     // Use this for initialization
     void Start () {
         if (!GameState.saveData.tutorialShowing[GameState.StageLevel - 1]) {
-            gameObject.AddComponent(barrages[GameState.StageLevel - 1]);
-            (gameObject.GetComponent(barrages[GameState.StageLevel - 1]) as Barrage).controller = controller;
-            (gameObject.GetComponent(barrages[GameState.StageLevel - 1]) as Barrage).BombPreFab = BombPreFab;
-            isInitialized = true;
-            
+            if(GameState.StageLevel <= 22)
+            {
+                gameObject.AddComponent(barrages[GameState.StageLevel - 1]);
+                (gameObject.GetComponent(barrages[GameState.StageLevel - 1]) as Barrage).controller = controller;
+                (gameObject.GetComponent(barrages[GameState.StageLevel - 1]) as Barrage).BombPreFab = BombPreFab;
+                isInitialized = true;
+            }
+            else
+            {
+                gameObject.AddComponent(barrages[22]);
+                (gameObject.GetComponent(barrages[22]) as Barrage).controller = controller;
+                (gameObject.GetComponent(barrages[22]) as Barrage).BombPreFab = BombPreFab;
+                isInitialized = true;
+
+            }
         }
     }
 	
