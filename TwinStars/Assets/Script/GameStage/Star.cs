@@ -6,6 +6,7 @@ public class Star : MonoBehaviour {
 
 	int unsuitableTime = 0;
 	int deathCount = 10;
+	bool isAttacked = false;
     bool isInitialized = false;
 
     // Use this for initialization
@@ -20,51 +21,60 @@ public class Star : MonoBehaviour {
             isInitialized = true;
         }
     }
-	
+
 	// Update is called once per frame
-	void Update () {
+	void Update() {
 
 		if (!isInitialized && !GameState.saveData.tutorialShowing[GameState.StageLevel - 1]) {
-            GetComponent<SpriteRenderer>().enabled = true;
-            isInitialized = true;
-        }
-        else if (!isInitialized) {
-            return;
-        }
+			GetComponent<SpriteRenderer>().enabled = true;
+			isInitialized = true;
+		} else if (!isInitialized) {
+			return;
+		}
 
-        if (GameState.isGamePaused) return;
-        float deltaTime = Time.deltaTime;
-        const float speed = 5.0f;
-		
-        Vector2 moveDir = new Vector2(0, 0);
-        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) moveDir.y += 1;
-        if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)) moveDir.y -= 1;
-        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) moveDir.x -= 1;
-        if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) moveDir.x += 1;
+		if (GameState.isGamePaused) return;
+		float deltaTime = Time.deltaTime;
+		const float speed = 5.0f;
 
-        moveDir.Normalize();
-        
-        moveDir = moveDir * speed * deltaTime;
+		Vector2 moveDir = new Vector2(0, 0);
+		if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) moveDir.y += 1;
+		if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)) moveDir.y -= 1;
+		if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) moveDir.x -= 1;
+		if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) moveDir.x += 1;
 
-        GetComponent<Rigidbody2D>().MovePosition(GetComponent<Rigidbody2D>().position + moveDir);
+		moveDir.Normalize();
 
-		unsuitableTime--;
+		moveDir = moveDir * speed * deltaTime;
+
+		GetComponent<Rigidbody2D>().MovePosition(GetComponent<Rigidbody2D>().position + moveDir);
+		if (unsuitableTime != 0)
+			unsuitableTime--;
 	}
 
-    private void OnTriggerEnter2D(Collider2D other) {
+	void LateUpdate() {
+		if (isAttacked) {
+			Save s = GameObject.Find("MazeLoader").GetComponent<Save>();
+			GameObject.Find("RedStar").transform.position = s.redStar;
+			GameObject.Find("BlueStar").transform.position = s.blueStar;
+			Debug.Log(deathCount);
+			isAttacked = false;
+		}
+	}
+
+	private void OnTriggerEnter2D(Collider2D other) {
 		if (other.gameObject.tag == "Bullet" && gameObject.name == "RedStar") {
 			if (deathCount <= 0 && unsuitableTime < 0) {
 				GetComponent<Animator>().SetBool("isShooted", true);
 				GameObject.Find("BlueStar").GetComponent<Animator>().SetBool("isBlueExplode", true);
 				GameState.isGameOver = true;
 				GameState.isGamePaused = true;
-			} else if (unsuitableTime < 0) {
+			} else if (unsuitableTime <= 0) {
+				isAttacked = true;
 				Save s = GameObject.Find("MazeLoader").GetComponent<Save>();
 				GameObject.Find("RedStar").transform.position = s.redStar;
 				GameObject.Find("BlueStar").transform.position = s.blueStar;
-				deathCount--;
-				Debug.Log(deathCount);
 				unsuitableTime = 60;
+				deathCount--;
 			}
 			
 		}

@@ -7,7 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 public class GameState : MonoBehaviour {
 
     //게임이 몇 스테이지인지를 의미함
-    public static int StageLevel = 12;
+    public static int StageLevel = 1;
 
     //게임이 멈추었는지를 의미함. 일시정지 뿐만 아니라 클리어 등도 포함함
     public static bool isGamePaused = false;
