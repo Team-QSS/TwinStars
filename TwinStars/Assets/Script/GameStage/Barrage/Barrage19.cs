@@ -20,7 +20,7 @@ public class Barrage19 : Barrage {
             return;
         for(int i = 0; i < 4; i++)
         {
-            for(int j = 0; j < 6; j++)
+            for(int j = 1; j < 4; j++)
             {
                 GameObject obj = AddBullet(4, false);
                 obj.AddComponent<StrightBullet>();
